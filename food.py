@@ -1,4 +1,5 @@
 import random
+from p5 import *
 class Food:
     def __init__(self, x, y):
         self.position = [x, y]
@@ -11,7 +12,7 @@ class Food:
             self.size = min(self.size, self.max_size)
 
     def draw(self):
-        noStroke()
-        fill(color(0, 255, 0))
-        ellipse(self.position[0], self.position[1], self.size/2, self.size/2)
+        no_stroke()
+        fill(Color(0, 255, 0))
+        ellipse((self.position[0], self.position[1]), self.size/2, self.size/2)
     

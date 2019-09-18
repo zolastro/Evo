@@ -9,6 +9,7 @@ class Preprocessor:
         self.stack_size = stack_size
 
     def _preprocess_frame(self, frame):
+        print(frame)
         preprocessed_frame = transform.resize(normalized_frame, [frame_size,frame_size])
         return preprocessed_frame
 
