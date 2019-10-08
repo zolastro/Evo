@@ -2,6 +2,7 @@ from math import atan2
 from PIL import Image
 from collections import deque
 from p5 import *
+import numpy as np
 class Creature:
 
     def __init__(self, x, y):
@@ -61,8 +62,7 @@ class Creature:
         right = int(self.position[0] + (self.fov / 2)) 
         top = int(self.position[1] - (self.fov / 2)) 
         bottom = int(self.position[1] + (self.fov / 2)) 
-        
-        return np.array(environment[left:right, top:bottom])
+        return environment[left:right, top:bottom]
 
     def draw(self):
         col = Color(255, 102, 255)
