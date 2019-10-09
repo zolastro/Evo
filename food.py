@@ -7,6 +7,7 @@ class Food:
         self.max_size = 20
 
     def update(self):
+        #Increase size 1% of the time
         if (random.random() > 0.99):
             self.size += 1
             self.size = min(self.size, self.max_size)
