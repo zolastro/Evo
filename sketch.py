@@ -4,6 +4,8 @@ import argparse
 
 from creature import Creature
 from food import Food
+from skimage import transform
+from matplotlib import pyplot as plt
 
 # Environment hyperparameters
 env_area = 300
@@ -24,7 +26,7 @@ food = []
 def setup():
     # Setup canvas and color settings 
     size(env_area + fov, env_area + fov)
-    color_mode('RGB', 255, 255, 255, 100)
+    color_mode('RGB', 1, 1, 1, 1)
 
     # Setup initial population
     for i in range(initial_population):
@@ -44,23 +46,21 @@ def setup():
     print('Setup finished')
 
 def draw():
-    state = None
     with load_pixels():
-            for c in population:
-                state = c.get_state(pixels)
-
+        env = p5.renderer.fbuffer.read(mode='color', alpha=False)
+        for c in population:
+            state = c.get_state(env)
+        
     background(0)
     # Draw boundaries
     no_fill()
-    stroke(Color(255, 0, 0))
+    stroke(Color(1, 0, 0))
     rect((fov/2, fov/2), width - fov, height - fov)
 
     # Update entities
     for c in population:
         c.update([-0.01, 0.01], food)
         c.draw()
-    image(state, (0, 0))
-
 
     for f in food:
         if (f.size == 0):
@@ -68,7 +68,8 @@ def draw():
         else:
             f.update()
             f.draw() 
-
+        
+    
 
 
 
