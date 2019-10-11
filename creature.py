@@ -7,7 +7,7 @@ class Creature:
         self.energy = 300
         self.fov = fov
 
-        self.velocity = [0.2, 0.0]
+        self.velocity = [6, 0.0]
         self.max_speed = 8.0
         self.max_force = 0.2
         self.size = 3
@@ -52,6 +52,7 @@ class Creature:
         right = int(self.position[0] + (self.fov / 2)) 
         top = int(self.position[1] - (self.fov / 2)) 
         bottom = int(self.position[1] + (self.fov / 2)) 
+        
         return environment[top:bottom, left:right, :]
 
     def draw(self):
