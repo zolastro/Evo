@@ -9,8 +9,7 @@ from preprocessor import Preprocessor
 
 # Environment hyperparameters
 env_area = 300
-stacked_state = []
-stacked_frames = []
+
 # Preprocessor hyperparameters
 stack_size = 2
 frame_size = 16
@@ -50,12 +49,24 @@ def setup():
     print('Setup finished')
 
 def draw():
-    global stacked_state
-    global stacked_frames
     env = p5.renderer.fbuffer.read(mode='color', alpha=False)
     for c in population:
-        state = c.get_state(env)
-        stacked_state, stacked_frames  = Preprocessor.stack_frames(state, stacked_frames, 16, 2)
+        raw_state = c.get_state(env)
+        c.previous_state = c.current_state
+        c.current_state, c.stacked_frames  = Preprocessor.stack_frames(raw_state, c.stacked_frames, 16, 2)
+        if len(c.previous_state) > 0 :
+            c.remember((c.previous_state, c.last_action, c.last_reward, c.current_state))
+            # fig=plt.figure(figsize=(2, 1))
+            # fig.add_subplot(2, 1, 1)
+            # plt.imshow(c.previous_state[:, :, 0:3])
+            # fig.add_subplot(2, 1, 2)
+            # plt.imshow(c.current_state[:, :, 0:3])
+            # plt.show()
+            # print('Reward: ' + str(c.last_reward))
+            # print('Action: ' + str(c.last_action))
+            # print('Memory length: ' + str(c.memory.get_length()))
+
+            
     background(0)
     # Draw boundaries
     no_fill()
@@ -71,7 +82,12 @@ def draw():
             f.draw() 
             
     for c in population:
-        c.update([-0.01, 0.01], food)
+        action = [-0.01, 0.01]
+        reward = c.update(action, food)
+        c.last_action = action
+        c.last_reward = reward
+        # next_state = state
+        # c.remember((state, action, reward, next_state))
         c.draw()
 
 

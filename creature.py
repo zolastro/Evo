@@ -1,17 +1,28 @@
 from p5 import *
+from replay_buffer import ReplayBuffer
 from math import atan2
 
 class Creature:
     def __init__(self, x, y, fov, energy):
+        # Model
+
+        # Memories
+        self.stacked_frames = []
+        self.current_state = []
+        self.last_action = []
+        self.last_reward = 0
+        self.previous_state = []
+        self.memory = ReplayBuffer(25000)
+
+        # Attributes
         self.position = [x, y]
         self.energy = 300
         self.fov = fov
-
         self.velocity = [6, 0.0]
         self.max_speed = 8.0
         self.max_force = 0.2
         self.size = 3
-    
+
     def update(self, acceleration, food):
         # Limit force
         acc_magnitude = mag(acceleration[0], acceleration[1])
@@ -46,13 +57,13 @@ class Creature:
                 reward += 5
                 self.energy += 5
                 f.size -= 1
+        return reward
 
     def get_state(self, environment):
         left = int(self.position[0] - (self.fov / 2)) 
         right = int(self.position[0] + (self.fov / 2)) 
         top = int(self.position[1] - (self.fov / 2)) 
         bottom = int(self.position[1] + (self.fov / 2)) 
-        
         return environment[top:bottom, left:right, :]
 
     def draw(self):
@@ -76,3 +87,7 @@ class Creature:
         vertex(self.size, self.size * 2)
         end_shape('CLOSE')
         reset_matrix()
+
+    def remember(self, experience):
+        self.memory.store_experience(experience)
+

@@ -20,11 +20,9 @@ class Preprocessor:
             stacked_frames = deque([np.zeros((frame_size,frame_size), dtype=np.int) for i in range(stack_size)], maxlen=stack_size)
             # Initialize the frames deque by copying the same frame "stack_size" times
             for _ in range(stack_size):
-                print('New frame!')
                 stacked_frames.append(frame)
         else:
             # Append the frames to the deque
-            print('New frame!')
             stacked_frames.append(frame)
         
         # Create an stack out of the deque
