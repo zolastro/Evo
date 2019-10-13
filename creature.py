@@ -74,8 +74,8 @@ class Creature:
         stroke(col)
         
         # Draw fov for debugging
-        no_fill()
-        square((self.position[0], self.position[1]), self.fov, 'CENTER')
+        # no_fill()
+        # square((self.position[0], self.position[1]), self.fov, 'CENTER')
         
         # Calculate which angle the creature is heading
         theta = atan2(self.velocity[1], self.velocity[0]) + PI/2
