@@ -1,11 +1,11 @@
 from p5 import *
-from replay_buffer import ReplayBuffer
 from math import atan2
 
-class Creature:
-    def __init__(self, x, y, fov, energy):
-        # Model
+from DDQN import DDQN
+from replay_buffer import ReplayBuffer
 
+class Creature:
+    def __init__(self, x, y, fov, energy, action_size, state_size):
         # Memories
         self.stacked_frames = []
         self.current_state = []
@@ -13,12 +13,15 @@ class Creature:
         self.last_reward = 0
         self.previous_state = []
         self.memory = ReplayBuffer(25000)
+    
+        # Model
+        self.model = DDQN(state_size, action_size, self.memory)
 
         # Attributes
         self.position = [x, y]
         self.energy = 300
         self.fov = fov
-        self.velocity = [6, 0.0]
+        self.velocity = [0.0, 0.0]
         self.max_speed = 8.0
         self.max_force = 0.2
         self.size = 3

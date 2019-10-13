@@ -9,6 +9,12 @@ from preprocessor import Preprocessor
 
 # Environment hyperparameters
 env_area = 300
+up = [0, -1]
+right = [1, 0]
+down = [0, 1]
+left = [-1, 0]
+possible_actions = [up, right, down, left]
+action_size = len(possible_actions)
 
 # Preprocessor hyperparameters
 stack_size = 2
@@ -18,6 +24,9 @@ frame_size = 16
 initial_population = 1
 fov = 64
 energy = 300
+min_replay_size = 128
+batch_size = 64
+state_size = (frame_size, frame_size, stack_size*3)
 
 # Resources hyperparameters
 initial_food = 20
@@ -37,7 +46,9 @@ def setup():
             np.random.randint(fov, width - fov),
             np.random.randint(fov, height - fov),
             fov,
-            energy
+            energy,
+            action_size,
+            state_size
             ))
     
     # Setup food
@@ -53,18 +64,11 @@ def draw():
     for c in population:
         raw_state = c.get_state(env)
         c.previous_state = c.current_state
-        c.current_state, c.stacked_frames  = Preprocessor.stack_frames(raw_state, c.stacked_frames, 16, 2)
+        c.current_state, c.stacked_frames  = Preprocessor.stack_frames(raw_state, c.stacked_frames, frame_size, stack_size)
         if len(c.previous_state) > 0 :
             c.remember((c.previous_state, c.last_action, c.last_reward, c.current_state))
-            # fig=plt.figure(figsize=(2, 1))
-            # fig.add_subplot(2, 1, 1)
-            # plt.imshow(c.previous_state[:, :, 0:3])
-            # fig.add_subplot(2, 1, 2)
-            # plt.imshow(c.current_state[:, :, 0:3])
-            # plt.show()
-            # print('Reward: ' + str(c.last_reward))
-            # print('Action: ' + str(c.last_action))
-            # print('Memory length: ' + str(c.memory.get_length()))
+            if c.memory.get_length() >= min_replay_size:
+                c.model.replay(batch_size)
 
             
     background(0)
@@ -82,8 +86,8 @@ def draw():
             f.draw() 
             
     for c in population:
-        action = [-0.01, 0.01]
-        reward = c.update(action, food)
+        action = c.model.act(c.previous_state)
+        reward = c.update(possible_actions[action], food)
         c.last_action = action
         c.last_reward = reward
         # next_state = state
