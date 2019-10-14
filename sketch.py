@@ -7,6 +7,8 @@ from creature import Creature
 from food import Food
 from preprocessor import Preprocessor
 
+episode = 0
+
 # Environment hyperparameters
 env_area = 300
 up = [0, -1]
@@ -21,7 +23,7 @@ stack_size = 2
 frame_size = 16
 
 # Population hyperparameters
-initial_population = 1
+initial_population = 5
 fov = 64
 energy = 300
 min_replay_size = 128
@@ -29,7 +31,7 @@ batch_size = 64
 state_size = (frame_size, frame_size, stack_size*3)
 
 # Resources hyperparameters
-initial_food = 20
+initial_food = 50
 
 # Entities initialization
 population = []
@@ -60,6 +62,7 @@ def setup():
     print('Setup finished')
 
 def draw():
+    global episode
     env = p5.renderer.fbuffer.read(mode='color', alpha=False)
     for c in population:
         raw_state = c.get_state(env)
@@ -69,6 +72,8 @@ def draw():
             c.remember((c.previous_state, c.last_action, c.last_reward, c.current_state))
             if c.memory.get_length() >= min_replay_size:
                 c.model.replay(batch_size)
+            if episode % 100 == 0:
+                c.model.update_target_model()
 
             
     background(0)
@@ -79,11 +84,8 @@ def draw():
 
     # Update entities
     for f in food:
-        if (f.size == 0):
-            del f
-        else:
-            f.update()
-            f.draw() 
+        f.update()
+        f.draw() 
             
     for c in population:
         action = c.model.act(c.previous_state)
@@ -93,7 +95,7 @@ def draw():
         # next_state = state
         # c.remember((state, action, reward, next_state))
         c.draw()
-
+    episode += 1
 
 if __name__ == '__main__':
     run(frame_rate=30)

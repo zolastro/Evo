@@ -5,14 +5,18 @@ from DDQN import DDQN
 from replay_buffer import ReplayBuffer
 
 class Creature:
+    id = 0
+    
     def __init__(self, x, y, fov, energy, action_size, state_size):
+        self.id = Creature.id
+        Creature.id += 1
         # Memories
         self.stacked_frames = []
         self.current_state = []
         self.last_action = []
         self.last_reward = 0
         self.previous_state = []
-        self.memory = ReplayBuffer(25000)
+        self.memory = ReplayBuffer(50000)
     
         # Model
         self.model = DDQN(state_size, action_size, self.memory)
@@ -22,7 +26,7 @@ class Creature:
         self.energy = 300
         self.fov = fov
         self.velocity = [0.0, 0.0]
-        self.max_speed = 8.0
+        self.max_speed = 2.0
         self.max_force = 0.2
         self.size = 3
 
@@ -56,7 +60,7 @@ class Creature:
 
         # Check if it is eating food
         for f in food:
-            if (dist((self.position[0], self.position[1]), (f.position[0], f.position[1])) < (f.size + self.size)):
+            if ((f.size > 0) and dist((self.position[0], self.position[1]), (f.position[0], f.position[1])) < (f.size + self.size)):
                 reward += 5
                 self.energy += 5
                 f.size -= 1
