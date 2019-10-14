@@ -70,10 +70,13 @@ def draw():
         c.current_state, c.stacked_frames  = Preprocessor.stack_frames(raw_state, c.stacked_frames, frame_size, stack_size)
         if len(c.previous_state) > 0 :
             c.remember((c.previous_state, c.last_action, c.last_reward, c.current_state))
-            if c.memory.get_length() >= min_replay_size:
+            if c.memory.get_length() >= min_replay_size and episode % 5 == 0:
                 c.model.replay(batch_size)
             if episode % 100 == 0:
                 c.model.update_target_model()
+            if episode % 500 == 0:
+                print('Ep: {:d} Id:{:d} Mem:{:d} Score:{:d}'.format(episode, c.id, c.memory.get_length(), c.score))
+                c.score = 0
 
             
     background(0)

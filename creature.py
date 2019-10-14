@@ -6,7 +6,7 @@ from replay_buffer import ReplayBuffer
 
 class Creature:
     id = 0
-    
+
     def __init__(self, x, y, fov, energy, action_size, state_size):
         self.id = Creature.id
         Creature.id += 1
@@ -17,6 +17,7 @@ class Creature:
         self.last_reward = 0
         self.previous_state = []
         self.memory = ReplayBuffer(50000)
+        self.score = 0
     
         # Model
         self.model = DDQN(state_size, action_size, self.memory)
@@ -54,7 +55,6 @@ class Creature:
         self.position[1] = constrain(self.position[1], self.fov/2, height - self.fov/2)
 
         # Decrease energy every step
-        self.energy -= 1
 
         reward = -1
 
@@ -62,7 +62,7 @@ class Creature:
         for f in food:
             if ((f.size > 0) and dist((self.position[0], self.position[1]), (f.position[0], f.position[1])) < (f.size + self.size)):
                 reward += 5
-                self.energy += 5
+                self.score += 5
                 f.size -= 1
         return reward
 

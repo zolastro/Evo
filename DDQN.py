@@ -53,7 +53,6 @@ class DDQN:
 
     def update_target_model(self):
         # Copy weights from model to target_model
-        print('Updating target model...')
         self.target_model.set_weights(self.model.get_weights())
 
 
