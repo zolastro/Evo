@@ -37,6 +37,10 @@ initial_food = 50
 population = []
 food = []
 
+# Graphs
+fig, axs = plt.subplots(initial_population)
+
+
 def setup():
     # Setup canvas and color settings 
     size(env_area + fov, env_area + fov)
@@ -60,9 +64,12 @@ def setup():
             np.random.randint(fov, height - fov)))
     
     print('Setup finished')
+    plt.ion()
 
 def draw():
     global episode
+    global fig, axs
+    
     env = p5.renderer.fbuffer.read(mode='color', alpha=False)
     for c in population:
         raw_state = c.get_state(env)
@@ -76,9 +83,14 @@ def draw():
                 c.model.update_target_model()
             if episode % 500 == 0:
                 print('Ep: {:d} Id:{:d} Mem:{:d} Score:{:d}'.format(episode, c.id, c.memory.get_length(), c.score))
+                c.scores.append(c.score)
                 c.score = 0
-
-            
+                axs[c.id].set_ylim(0, 1000)
+                axs[c.id].plot(range(0, round(episode/500)), c.scores, 'b')
+                plt.pause(0.01)
+    if (episode % 500 == 0):
+        plt.show()
+        plt.pause(0.001)
     background(0)
     # Draw boundaries
     no_fill()

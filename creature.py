@@ -18,7 +18,7 @@ class Creature:
         self.previous_state = []
         self.memory = ReplayBuffer(50000)
         self.score = 0
-    
+        self.scores = []
         # Model
         self.model = DDQN(state_size, action_size, self.memory)
 
